@@ -62,7 +62,7 @@ class ProgramInfo(BaseModel):
 
 
 PROGRAMS = {
-    "arduino-iot": ProgramInfo(id="arduino-iot", name="Arduino & IoT (Online)", amount_inr=999, mode="online",
+    "arduino-iot": ProgramInfo(id="arduino-iot", name="Arduino & IoT (Online)", amount_inr=9, mode="online",
                                description="4-Week hands-on Arduino & IoT internship"),
     "stm32-embedded": ProgramInfo(id="stm32-embedded", name="Embedded System with STM32 (Online)", amount_inr=1499, mode="online",
                                   description="ARM Cortex-M4 STM32 embedded systems internship"),
