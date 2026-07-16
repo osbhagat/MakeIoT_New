@@ -6,5 +6,5 @@ export const API = `${BACKEND_URL}/api`;
 // withCredentials sends the httpOnly session cookie automatically on admin routes.
 export const api = axios.create({
   baseURL: API,
-  withCredentials: true,
+ // withCredentials: true,
 });
