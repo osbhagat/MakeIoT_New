@@ -62,7 +62,7 @@ class ProgramInfo(BaseModel):
 
 
 PROGRAMS = {
-    "arduino-iot": ProgramInfo(id="arduino-iot", name="Arduino & IoT (Online)", amount_inr=9, mode="online",
+    "arduino-iot": ProgramInfo(id="arduino-iot", name="Arduino & IoT (Online)", amount_inr=999, mode="online",
                                description="4-Week hands-on Arduino & IoT internship"),
     "stm32-embedded": ProgramInfo(id="stm32-embedded", name="Embedded System with STM32 (Online)", amount_inr=1499, mode="online",
                                   description="ARM Cortex-M4 STM32 embedded systems internship"),
@@ -260,7 +260,7 @@ def build_confirmation_email(enrollment: dict, content: CourseContent) -> tuple[
         {referral_line}
 
         <tr><td style="padding:6px 32px 22px;font-size:13px;color:#64748B;line-height:1.55">
-          For any questions, WhatsApp us at <a href="https://wa.me/918856905687" style="color:#0055FF;text-decoration:none">+91 88569 05687</a>.
+          For any questions, WhatsApp us at <a href="https://wa.me/917218348853" style="color:#0055FF;text-decoration:none">+91 72183 48853</a>.
           <br/>Please do not share the course link with others.
         </td></tr>
 

@@ -97,7 +97,7 @@ def generate_offer_letter_pdf(*, student_name: str, program_id: str,
     right_lines = [
         "Gera Imperium Rise, Hinjawadi Phase II",
         "Pune, Maharashtra 411057, India",
-        "hello@makeiot.in  ·  +91 88569 05687",
+        "hello@makeiot.in  ·  +91 72183 48853",
         "makeiot.in",
     ]
     yy = header_top - 7 * mm

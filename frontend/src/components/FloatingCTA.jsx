@@ -5,7 +5,7 @@ export default function FloatingCTA() {
   return (
     <div className="fixed right-4 bottom-4 z-50 flex flex-col gap-3">
       <a
-        href="tel:+918856905687"
+        href="tel:+917218348853"
         data-testid="floating-call-btn"
         className="w-14 h-14 rounded-full bg-[#0055FF] text-white grid place-items-center shadow-lg hover:bg-[#0044CC] transition"
         aria-label="Call us"
@@ -13,7 +13,7 @@ export default function FloatingCTA() {
         <Phone size={22} />
       </a>
       <a
-        href="https://wa.me/918856905687"
+        href="https://wa.me/917218348853"
         target="_blank"
         rel="noopener noreferrer"
         data-testid="floating-whatsapp-btn"

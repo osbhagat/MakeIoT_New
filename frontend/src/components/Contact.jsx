@@ -22,15 +22,15 @@ export default function Contact() {
           <Card
             icon={<Phone size={22} />}
             title="Call"
-            lines={["+91 88569 05687"]}
-            href="tel:+918856905687"
+            lines={["+91 72183 48853"]}
+            href="tel:+917218348853"
             testid="contact-call"
           />
           <Card
             icon={<MessageCircle size={22} />}
             title="WhatsApp"
             lines={["Chat with us instantly"]}
-            href="https://wa.me/918856905687"
+            href="https://wa.me/917218348853"
             testid="contact-whatsapp"
           />
           <Card
