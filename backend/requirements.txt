@@ -27,3 +27,5 @@ reportlab==5.0.0
 
 # ---- Config ----
 python-dotenv==1.0.1
+
+qrcode[pil]==8.2

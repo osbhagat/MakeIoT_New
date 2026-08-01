@@ -17,6 +17,8 @@ from typing import List, Optional, Literal
 from datetime import datetime, timezone, timedelta
 
 from offer_letter import generate_offer_letter_pdf, generate_offer_letter_base64
+from assessment import ASSESSMENTS
+from certificate import generate_certificate_id, generate_certificate_base64
 
 
 ROOT_DIR = Path(__file__).parent
@@ -185,6 +187,7 @@ def build_confirmation_email(enrollment: dict, content: CourseContent) -> tuple[
     share_url = f"{FRONTEND_URL}?ref={ref}" if ref else FRONTEND_URL
     first_name = enrollment["name"].split(" ")[0]
     batch = datetime.now().strftime("%B %Y")
+    assessment_url = f"{FRONTEND_URL}/assessment/{enrollment['id']}"
 
     program_meta = {
         "arduino-iot": ("Academic Internship", "Online Self Paced", "4 weeks",
@@ -229,6 +232,38 @@ def build_confirmation_email(enrollment: dict, content: CourseContent) -> tuple[
     </td></tr>
     """ if ref else ""
 
+    assessment_cta = ""
+    if enrollment["program_id"] in ["arduino-iot", "stm32-embedded"]:
+        assessment_cta = f"""
+        <tr>
+        <td style="padding:4px 32px 22px">
+            <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:18px">
+
+            <div style="font-weight:700;font-size:16px;color:#0F172A;margin-bottom:8px">
+                🎓 How to earn your Internship Certificate
+            </div>
+
+            <div style="font-size:13.5px;color:#475569;line-height:1.65;margin-bottom:14px">
+                1. Complete your internship course and learning activities.<br/>
+                2. Take the final Certification Assessment.<br/>
+                3. Score at least <strong>60%</strong> to qualify.<br/>
+                4. Your verified internship certificate will be issued automatically by email.
+            </div>
+
+            <a href="{assessment_url}"
+                style="display:inline-block;background:#0F172A;color:#fff;padding:12px 22px;border-radius:7px;font-weight:700;text-decoration:none;font-size:14px">
+                Take Final Assessment →
+            </a>
+
+            <div style="margin-top:10px;font-size:12px;color:#64748B">
+                We recommend taking the assessment after completing the course. You may retry if required.
+            </div>
+
+            </div>
+        </td>
+        </tr>
+        """
+    
     subject = f"🎉 Welcome to Make IoT — {itype} confirmed"
     html = f"""
     <div style="background:#F1F5F9;padding:24px 0;font-family:Arial,sans-serif;color:#1F2937">
@@ -241,11 +276,15 @@ def build_confirmation_email(enrollment: dict, content: CourseContent) -> tuple[
         <tr><td style="padding:26px 32px 8px">
           <div style="font-family:'Outfit',Arial,sans-serif;font-weight:800;font-size:22px;color:#0F172A">🎉 Welcome, {first_name}!</div>
           <p style="margin:8px 0 0;color:#334155;line-height:1.55;font-size:14.5px">
-            Your <strong>{itype}</strong> at Make IoT is confirmed. Your offer letter is <strong>attached to this email</strong> — click below to start learning right away.
-          </p>
+            Your <strong>{itype}</strong> at Make IoT is confirmed.
+            Your offer letter is <strong>attached to this email</strong>.
+            Start your course below. After completing your learning, take the final certification assessment to receive your verified internship certificate.
+            </p>
         </td></tr>
 
         {course_cta}
+
+        {assessment_cta}    
 
         <tr><td style="padding:0 32px 16px">
           <table role="presentation" cellpadding="4" style="font-family:Arial,sans-serif;font-size:13.5px;color:#1F2937">
@@ -379,6 +418,101 @@ async def finalise_paid_enrollment(enrollment_id: str, razorpay_payment_id: Opti
     await send_confirmation_email(enrollment)
     return enrollment
 
+class AssessmentSubmit(BaseModel):
+    enrollment_id: str
+    answers: List[int]
+
+async def send_certificate_email(enrollment: dict):
+    if not EMAIL_ENABLED:
+        return
+
+    pdf_b64, certificate_id = generate_certificate_base64(
+        student_name=enrollment["name"],
+        program_id=enrollment["program_id"],
+        enrollment_id=enrollment["id"],
+    )
+
+    first_name = enrollment["name"].split(" ")[0]
+
+    subject = f"🎓 Your Make IoT Internship Certificate — {certificate_id}"
+
+    html = f"""
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#1F2937">
+
+        <h2 style="color:#0055FF">
+            Congratulations, {first_name}! 🎉
+        </h2>
+
+        <p>
+            You have successfully completed the Internship Certification
+            Assessment for <strong>{enrollment["program_name"]}</strong>.
+        </p>
+
+        <p>
+            Your verified internship certificate is attached to this email.
+        </p>
+
+        <p>
+            <strong>Certificate ID:</strong><br/>
+            {certificate_id}
+        </p>
+
+        <p>
+            Your certificate can also be verified by scanning the QR code
+            printed on the certificate.
+        </p>
+
+        <p>
+            We wish you the best in your continued learning and career journey.
+        </p>
+
+        <p>
+            Best regards,<br/>
+            <strong>Omkar Bhagat</strong><br/>
+            Founder · Make IoT
+        </p>
+
+    </div>
+    """
+
+    safe_name = "".join(
+        ch for ch in enrollment["name"]
+        if ch.isalnum() or ch in "-_ "
+    ).strip().replace(" ", "_") or "Student"
+
+    params = {
+        "from": f"{SENDER_NAME} <{SENDER_EMAIL}>",
+        "to": [enrollment["email"]],
+        "subject": subject,
+        "html": html,
+        "reply_to": [REPLY_TO_EMAIL],
+        "attachments": [{
+            "filename": f"MakeIoT_Internship_Certificate_{safe_name}.pdf",
+            "content": pdf_b64,
+        }],
+    }
+
+    try:
+        result = await asyncio.to_thread(
+            resend.Emails.send,
+            params
+        )
+
+        await db.enrollments.update_one(
+            {"id": enrollment["id"]},
+            {
+                "$set": {
+                    "certificate_email_sent": True,
+                    "certificate_email_id": result.get("id")
+                }
+            }
+        )
+
+    except Exception as e:
+        logging.exception(
+            "Failed to send certificate email: %s",
+            e
+        )
 
 # --------- Routes ---------
 @api_router.get("/")
@@ -517,6 +651,124 @@ async def mock_pay(payload: CreateOrderRequest):
             "referral_code": final.get("referral_code_own") if final else None,
             "is_mocked": True}
 
+@api_router.get("/assessment/{enrollment_id}")
+async def get_assessment(enrollment_id: str):
+    enrollment = await db.enrollments.find_one(
+        {"id": enrollment_id}, {"_id": 0}
+    )
+
+    if not enrollment:
+        raise HTTPException(status_code=404, detail="Enrollment not found")
+
+    if enrollment["payment_status"] != "paid":
+        raise HTTPException(status_code=403, detail="Payment not completed")
+
+    if enrollment["program_id"] == "stm32-embedded":
+        assessment_key = "embedded"
+    elif enrollment["program_id"] == "arduino-iot":
+        assessment_key = "iot"
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Assessment not available for this program"
+        )
+
+    assessment = ASSESSMENTS[assessment_key]
+
+    return {
+        "student_name": enrollment["name"],
+        "program_name": enrollment["program_name"],
+        "passing_score": assessment["passing_score"],
+        "questions": [
+            {
+                "id": q["id"],
+                "question": q["question"],
+                "options": q["options"]
+            }
+            for q in assessment["questions"]
+        ]
+    }
+
+
+@api_router.post("/assessment/submit")
+async def submit_assessment(payload: AssessmentSubmit):
+
+    enrollment = await db.enrollments.find_one(
+        {"id": payload.enrollment_id}, {"_id": 0}
+    )
+
+    if not enrollment:
+        raise HTTPException(status_code=404, detail="Enrollment not found")
+
+    if enrollment["payment_status"] != "paid":
+        raise HTTPException(status_code=403, detail="Payment not completed")
+
+    if enrollment["program_id"] == "stm32-embedded":
+        assessment_key = "embedded"
+    elif enrollment["program_id"] == "arduino-iot":
+        assessment_key = "iot"
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Assessment not available for this program"
+        )
+
+    assessment = ASSESSMENTS[assessment_key]
+    questions = assessment["questions"]
+
+    if len(payload.answers) != len(questions):
+        raise HTTPException(
+            status_code=400,
+            detail="Please answer all questions"
+        )
+
+    correct = 0
+
+    for index, question in enumerate(questions):
+        if payload.answers[index] == question["correct_answer"]:
+            correct += 1
+
+    score = round((correct / len(questions)) * 100)
+    passed = score >= assessment["passing_score"]
+
+    if passed:
+
+        certificate_id = generate_certificate_id(
+        enrollment["program_id"],
+        enrollment["id"]
+    )
+
+        completed_at = datetime.now(timezone.utc).isoformat()
+
+        await db.enrollments.update_one(
+            {"id": payload.enrollment_id},
+            {
+                "$set": {
+                    "assessment_passed": True,
+                    "assessment_score": score,
+                    "assessment_completed_at": completed_at,
+                    "certificate_id": certificate_id,
+                    "certificate_issued_at": completed_at
+                }
+           }
+       ) 
+               
+        updated_enrollment = await db.enrollments.find_one(
+            {"id": payload.enrollment_id},
+            {"_id": 0}
+        )
+
+        if not enrollment.get("certificate_email_sent"):
+           await send_certificate_email(updated_enrollment)
+
+    return {
+    "score": score,
+    "correct": correct,
+    "total": len(questions),
+    "passed": passed,
+    "passing_score": assessment["passing_score"],
+    "certificate_id": certificate_id if passed else None
+   } 
 
 @api_router.get("/enrollments/{enrollment_id}")
 async def get_enrollment(enrollment_id: str):
@@ -525,6 +777,32 @@ async def get_enrollment(enrollment_id: str):
         raise HTTPException(status_code=404, detail="Not found")
     return e
 
+@api_router.get("/certificates/verify/{certificate_id}")
+async def verify_certificate(certificate_id: str):
+
+    enrollment = await db.enrollments.find_one(
+        {
+            "certificate_id": certificate_id,
+            "payment_status": "paid",
+            "assessment_passed": True
+        },
+        {"_id": 0}
+    )
+
+    if not enrollment:
+        raise HTTPException(
+            status_code=404,
+            detail="Certificate not found"
+        )
+
+    return {
+        "valid": True,
+        "certificate_id": enrollment["certificate_id"],
+        "student_name": enrollment["name"],
+        "program_name": enrollment["program_name"],
+        "assessment_score": enrollment.get("assessment_score"),
+        "issued_at": enrollment.get("certificate_issued_at")
+    }
 
 # --------- Admin ---------
 COOKIE_NAME = "mk_admin_session"
