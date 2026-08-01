@@ -64,9 +64,9 @@ class ProgramInfo(BaseModel):
 
 
 PROGRAMS = {
-    "arduino-iot": ProgramInfo(id="arduino-iot", name="Arduino & IoT (Online)", amount_inr=9, mode="online",
+    "arduino-iot": ProgramInfo(id="arduino-iot", name="Arduino & IoT (Online)", amount_inr=299, mode="online",
                                description="4-Week hands-on Arduino & IoT internship"),
-    "stm32-embedded": ProgramInfo(id="stm32-embedded", name="Embedded System with STM32 (Online)", amount_inr=1499, mode="online",
+    "stm32-embedded": ProgramInfo(id="stm32-embedded", name="Embedded System with STM32 (Online)", amount_inr=299, mode="online",
                                   description="ARM Cortex-M4 STM32 embedded systems internship"),
     "offline-pune": ProgramInfo(id="offline-pune", name="Offline Internship — Hinjawadi, Pune", amount_inr=2999, mode="offline",
                                 description="Offline internship at Hinjawadi Phase II, Pune"),
@@ -373,17 +373,34 @@ async def credit_referrer_if_any(enrollment: dict):
     ref = enrollment.get("referral_code_used")
     if not ref:
         return
+
+    # Prevent the same successful enrollment from rewarding the referrer twice
+    already_credited = await db.referrals.find_one(
+        {"referred_enrollment_id": enrollment["id"]},
+        {"_id": 0}
+    )
+    if already_credited:
+        return
+
     # Find the enrollment that owns this referral code
-    referrer = await db.enrollments.find_one({"referral_code_own": ref}, {"_id": 0})
+    referrer = await db.enrollments.find_one(
+        {"referral_code_own": ref, "payment_status": "paid"},
+        {"_id": 0}
+    )
     if not referrer:
         return
-    # Don't self-refer
+
+    # Don't allow self-referral
     if referrer["email"].lower() == enrollment["email"].lower():
         return
+
+    # Credit the referrer
     await db.enrollments.update_one(
         {"id": referrer["id"]},
         {"$inc": {"credits_earned_inr": REFERRAL_DISCOUNT_INR}},
     )
+
+    # Record this referral so it cannot be credited again
     await db.referrals.insert_one({
         "id": str(uuid.uuid4()),
         "referrer_enrollment_id": referrer["id"],
