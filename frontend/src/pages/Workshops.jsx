@@ -24,7 +24,7 @@ import Footer from "../components/Footer";
   /assets/workshops/sinhgad-Pune/arduino-explianed.jpg
 */
 
-const workshops = [
+export const workshops = [
   {
     id: "sinhgad-Pune",
 
@@ -813,7 +813,9 @@ function WorkshopSection({
   };
 
   return (
-    <section className="py-16 lg:py-24 border-b border-slate-200 last:border-b-0">
+    <section 
+    id={workshop.id}
+    className="py-16 lg:py-24 border-b border-slate-200 last:border-b-0">
 
       {/* =========================================================
           WORKSHOP HEADER
