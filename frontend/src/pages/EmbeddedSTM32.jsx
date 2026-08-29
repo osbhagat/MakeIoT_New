@@ -761,184 +761,244 @@ export default function EmbeddedSTM32() {
         </section>
 
         {/* =========================================================
-            06. OFFER LETTER & CERTIFICATE
-        ========================================================== */}
-        <section
-          id="certification"
-          className={`bg-[${OFFWHITE}] py-16 lg:py-24 border-t border-slate-200`}
-        >
-          <div className="max-w-7xl mx-auto px-5 lg:px-8">
-            <div className="max-w-3xl mb-10 lg:mb-12">
-              <SectionLabel accent={ORANGE}>
-                Internship Documentation
-              </SectionLabel>
+    06. OFFER LETTER & CERTIFICATE
+========================================================== */}
+<section
+  id="certification"
+  className={`bg-[${OFFWHITE}] py-16 lg:py-24 border-t border-slate-200`}
+>
+  <div className="max-w-7xl mx-auto px-5 lg:px-8">
 
-              <SectionHeading
-                black="Get the documents."
-                blue="Keep the proof."
-              />
+    <div className="max-w-3xl mb-10 lg:mb-12">
+      <SectionLabel accent={ORANGE}>
+        Internship Documentation
+      </SectionLabel>
 
-              <p className="mt-5 text-base sm:text-lg leading-7 text-slate-600 max-w-2xl">
-                Complete your internship with formal documentation that you
-                can submit to your college, add to your resume and showcase as
-                part of your professional profile.
-              </p>
-            </div>
+      <SectionHeading
+        black="Get the documents."
+        blue="Keep the proof."
+      />
 
-            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
-              {/* OFFER LETTER */}
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 lg:p-7 shadow-sm">
-                <div className="flex items-center justify-between gap-4 mb-5">
-                  <div>
-                    <p className="text-xs font-mono uppercase tracking-[0.18em] text-[#0055FF]">
-                      Internship Document
-                    </p>
-                    <h3 className="mt-2 text-2xl font-bold text-slate-900">
-                      Internship Offer Letter
-                    </h3>
-                  </div>
-                  <div className="shrink-0 h-11 w-11 rounded-full bg-blue-50 flex items-center justify-center text-[#0055FF] font-bold">
-                    01
-                  </div>
-                </div>
+      <p className="mt-5 text-base sm:text-lg leading-7 text-slate-600 max-w-2xl">
+        Complete your internship with formal documentation that you
+        can submit to your college, add to your resume and showcase as
+        part of your professional profile.
+      </p>
+    </div>
 
-                <div className="rounded-xl border border-slate-200 bg-[#F8F7F2] p-5 sm:p-7 min-h-[250px] flex items-center justify-center">
-                  <div className="w-full max-w-md bg-white border border-slate-200 shadow-sm rounded-lg p-6">
-                    <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-                      <div>
-                        <p className="text-lg font-bold text-[#0055FF]">
-                          Make IoT
-                        </p>
-                        <p className="text-[10px] text-slate-500">
-                          Empowering The Future
-                        </p>
-                      </div>
-                      <p className="text-[10px] font-mono text-slate-400">
-                        OFFER LETTER
-                      </p>
-                    </div>
 
-                    <div className="py-6 text-center">
-                      <p className="text-xs text-slate-500">
-                        This is a preview of the
-                      </p>
-                      <p className="mt-2 text-lg font-semibold text-slate-900">
-                        Internship Offer Letter
-                      </p>
-                      <div className="mt-5 space-y-2">
-                        <div className="h-2 bg-slate-100 rounded w-3/4 mx-auto" />
-                        <div className="h-2 bg-slate-100 rounded w-2/3 mx-auto" />
-                        <div className="h-2 bg-slate-100 rounded w-1/2 mx-auto" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+    <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
 
-                <div className="mt-6">
-                  <h4 className="font-bold text-slate-900">
-                    Issued as part of your enrollment
-                  </h4>
-                  <p className="mt-2 text-sm sm:text-base leading-6 text-slate-600">
-                    Receive your internship offer letter as part of your
-                    program documentation after successful enrollment.
-                  </p>
-                </div>
-              </div>
+      {/* =====================================================
+          OFFER LETTER
+      ====================================================== */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 lg:p-7 shadow-sm">
 
-              {/* CERTIFICATE */}
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 lg:p-7 shadow-sm">
-                <div className="flex items-center justify-between gap-4 mb-5">
-                  <div>
-                    <p className="text-xs font-mono uppercase tracking-[0.18em] text-[#FF7A00]">
-                      Internship Document
-                    </p>
-                    <h3 className="mt-2 text-2xl font-bold text-slate-900">
-                      Completion Certificate
-                    </h3>
-                  </div>
-                  <div className="shrink-0 h-11 w-11 rounded-full bg-orange-50 flex items-center justify-center text-[#FF7A00] font-bold">
-                    02
-                  </div>
-                </div>
+        <div className="flex items-center justify-between gap-4 mb-6">
 
-                <div className="rounded-xl border border-slate-200 bg-[#F8F7F2] p-5 sm:p-7 min-h-[250px] flex items-center justify-center">
-                  <div className="w-full max-w-md bg-white border border-slate-200 shadow-sm rounded-lg p-6">
-                    <div className="text-center">
-                      <p className="text-lg font-bold text-[#0055FF]">
-                        Make IoT
-                      </p>
-                      <p className="mt-4 text-xs font-mono uppercase tracking-[0.16em] text-slate-400">
-                        Certificate of Completion
-                      </p>
-                      <p className="mt-3 text-base font-semibold text-slate-900">
-                        Embedded Systems with STM32
-                      </p>
-                      <div className="mt-5 flex justify-center">
-                        <div className="h-12 w-12 rounded-md border border-[#FF7A00] flex items-center justify-center">
-                          <span className="text-[9px] text-slate-400">QR</span>
-                        </div>
-                      </div>
-                      <div className="mt-5 space-y-2">
-                        <div className="h-2 bg-slate-100 rounded w-2/3 mx-auto" />
-                        <div className="h-2 bg-slate-100 rounded w-1/2 mx-auto" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <div>
+            <p className="text-xs font-mono uppercase tracking-[0.18em] text-[#0055FF]">
+              Internship Document
+            </p>
 
-                <div className="mt-6">
-                  <h4 className="font-bold text-slate-900">
-                    Earned after completing the internship
-                  </h4>
-                  <p className="mt-2 text-sm sm:text-base leading-6 text-slate-600">
-                    Complete the required internship activities and assessment
-                    to receive your completion certificate.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
-              <div className="grid md:grid-cols-3 gap-6">
-                {[
-                  [
-                    "College",
-                    "Submit your internship documentation",
-                    "Use your offer letter and completion certificate as part of your college internship documentation.",
-                    ORANGE,
-                  ],
-                  [
-                    "Resume",
-                    "Add your internship experience",
-                    "Include the internship, technical skills and project work in your resume and portfolio.",
-                    BLUE,
-                  ],
-                  [
-                    "LinkedIn",
-                    "Showcase your achievement",
-                    "Add the internship and certificate to your LinkedIn profile to document your technical learning journey.",
-                    ORANGE,
-                  ],
-                ].map(([label, title, text, color]) => (
-                  <div key={label}>
-                    <p
-                      className="text-xs font-mono uppercase tracking-[0.16em]"
-                      style={{ color }}
-                    >
-                      {label}
-                    </p>
-                    <h3 className="mt-2 text-lg font-bold text-slate-900">
-                      {title}
-                    </h3>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                      {text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <h3 className="mt-2 text-2xl font-bold text-slate-900">
+              Internship Offer Letter
+            </h3>
           </div>
-        </section>
+
+          <div className="shrink-0 h-11 w-11 rounded-full bg-blue-50 flex items-center justify-center text-[#0055FF] font-bold">
+            01
+          </div>
+
+        </div>
+
+
+        {/* DOCUMENT DISPLAY AREA */}
+        <a
+          href="/assets/embedded-offer-letter.png"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open Internship Offer Letter in full size"
+          className="group block"
+        >
+
+          <div className="h-[360px] sm:h-[420px] lg:h-[440px] rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
+
+            <img
+              src="/assets/embedded-offer-letter.png"
+              alt="Make Embedded STM32 Internship Offer Letter"
+              className="max-h-full max-w-full w-auto h-auto object-contain transition-transform duration-300 group-hover:scale-[1.015]"
+            />
+
+          </div>
+
+
+          <div className="mt-3 flex items-center justify-between">
+
+            <span className="text-xs text-slate-400">
+              Official internship document
+            </span>
+
+            <span className="text-xs font-semibold text-[#0055FF] group-hover:underline">
+              View full document ↗
+            </span>
+
+          </div>
+
+        </a>
+
+
+        <div className="mt-6">
+
+          <h4 className="font-bold text-slate-900">
+            Issued as part of your enrollment
+          </h4>
+
+          <p className="mt-2 text-sm sm:text-base leading-6 text-slate-600">
+            Receive your internship offer letter as part of your
+            program documentation after successful enrollment.
+          </p>
+
+        </div>
+
+      </div>
+
+
+
+      {/* =====================================================
+          COMPLETION CERTIFICATE
+      ====================================================== */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 lg:p-7 shadow-sm">
+
+        <div className="flex items-center justify-between gap-4 mb-6">
+
+          <div>
+            <p className="text-xs font-mono uppercase tracking-[0.18em] text-[#FF7A00]">
+              Internship Document
+            </p>
+
+            <h3 className="mt-2 text-2xl font-bold text-slate-900">
+              Completion Certificate
+            </h3>
+          </div>
+
+          <div className="shrink-0 h-11 w-11 rounded-full bg-orange-50 flex items-center justify-center text-[#FF7A00] font-bold">
+            02
+          </div>
+
+        </div>
+
+
+        {/* DOCUMENT DISPLAY AREA */}
+        <a
+          href="/assets/embedded-completion-certificate.png"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open Internship Completion Certificate in full size"
+          className="group block"
+        >
+
+          <div className="h-[360px] sm:h-[420px] lg:h-[440px] rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
+
+            <img
+              src="/assets/embedded-completion-certificate.png"
+              alt="Make Embedded STM32 Internship Completion Certificate"
+              className="max-h-full max-w-full w-auto h-auto object-contain transition-transform duration-300 group-hover:scale-[1.015]"
+            />
+
+          </div>
+
+
+          <div className="mt-3 flex items-center justify-between">
+
+            <span className="text-xs text-slate-400">
+              Official internship document
+            </span>
+
+            <span className="text-xs font-semibold text-[#FF7A00] group-hover:underline">
+              View full document ↗
+            </span>
+
+          </div>
+
+        </a>
+
+
+        <div className="mt-6">
+
+          <h4 className="font-bold text-slate-900">
+            Earned after completing the internship
+          </h4>
+
+          <p className="mt-2 text-sm sm:text-base leading-6 text-slate-600">
+            Complete the required internship activities and assessment
+            to receive your completion certificate.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    {/* =========================================================
+        DOCUMENT USAGE
+    ========================================================== */}
+    <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+
+      <div className="grid md:grid-cols-3 gap-6">
+
+        {[
+          [
+            "College",
+            "Submit your internship documentation",
+            "Use your offer letter and completion certificate as part of your college internship documentation.",
+            ORANGE,
+          ],
+
+          [
+            "Resume",
+            "Add your internship experience",
+            "Include the internship, technical skills and projects in your resume and portfolio.",
+            BLUE,
+          ],
+
+          [
+            "LinkedIn",
+            "Showcase your achievement",
+            "Add the internship and certificate to your LinkedIn profile to document your technical learning journey.",
+            ORANGE,
+          ],
+        ].map(([label, title, text, color]) => (
+
+          <div key={label}>
+
+            <p
+              className="text-xs font-mono uppercase tracking-[0.16em]"
+              style={{ color }}
+            >
+              {label}
+            </p>
+
+            <h3 className="mt-2 text-lg font-bold text-slate-900">
+              {title}
+            </h3>
+
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              {text}
+            </p>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
 
         {/* =========================================================
             07. HOW IT WORKS

@@ -14,6 +14,7 @@ import AssessmentPage from "@/pages/AssessmentPage";
 import VerifyCertificate from "@/pages/VerifyCertificate";
 import EmbeddedSTM32 from "@/pages/EmbeddedSTM32";
 import ArduinoIoT from "@/pages/ArduinoIoT";
+import Workshops from "@/pages/Workshops";
 
 
 // Scroll to the top whenever the route changes
@@ -54,6 +55,11 @@ function App() {
           <Route
             path="/program/arduino-iot"
             element={<ArduinoIoT />}
+          />
+
+          <Route
+            path="/Workshops"
+            element={<Workshops />}
           />
 
           <Route
