@@ -5,6 +5,7 @@ import Hero from "../components/Hero";
 import Programs from "../components/Programs";
 import Curriculum from "../components/Curriculum";
 import PartnerColleges from "../components/PartnerColleges";
+import WorkshopCards from "../components/WorkshopCards";
 import Success from "../components/Success";
 import VideoSection from "../components/VideoSection";
 import Contact from "../components/Contact";
@@ -39,6 +40,7 @@ export default function Landing() {
       <Programs onEnroll={openEnroll} />
       <Curriculum />
       <PartnerColleges />
+      <WorkshopCards />
       <Success />
       <VideoSection />
       <Contact />
