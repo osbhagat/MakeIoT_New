@@ -2,13 +2,35 @@
 <html lang="en">
     <head>
         <!-- Google tag (gtag.js) -->
+        <script>
+        (function () {
+            var GA_ID = "G-0E3Q4JG7EQ";
+            var host = window.location.hostname;
+            var path = window.location.pathname;
+            var isProd = host === "makeiot.in" || host === "www.makeiot.in";
+            var isAdmin = path === "/admin" || path.indexOf("/admin/") === 0;
+            var adminSession = false;
+
+            try {
+                adminSession = sessionStorage.getItem("makeiot_admin_analytics_disabled") === "1";
+                if (isAdmin) {
+                    sessionStorage.setItem("makeiot_admin_analytics_disabled", "1");
+                    adminSession = true;
+                }
+            } catch (e) {}
+
+            window["ga-disable-" + GA_ID] = !isProd || isAdmin || adminSession;
+        })();
+        </script>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-0E3Q4JG7EQ"></script>
         <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'G-0E3Q4JG7EQ');
+        // React Router page views are sent manually from App.js.
+        // This avoids duplicate SPA page views and guarantees /admin/* exclusion.
+        gtag('config', 'G-0E3Q4JG7EQ', { send_page_view: false });
         </script>
         <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
