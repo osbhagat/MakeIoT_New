@@ -1,0 +1,16 @@
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Redirect old uppercase workshop URL to canonical lowercase URL
+  RewriteRule ^Workshops/?$ /workshops [R=301,L]
+
+  # Serve actual files and prerendered directories directly
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # All other React routes use the normal SPA shell
+  RewriteRule ^ spa.html [L]
+</IfModule>
