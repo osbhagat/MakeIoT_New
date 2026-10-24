@@ -702,6 +702,8 @@ Recommended event-scoped custom dimensions only if reporting requires them:
 2. `cta_location`
 3. `referral_used`
 4. `failure_stage`
+5. `ai_referrer`
+6. `contact_method`
 
 Do not create custom dimensions for:
 
@@ -968,3 +970,10 @@ Files changed/added:
 - `frontend/src/components/Contact.jsx` — WhatsApp/phone/email contact-intent tracking.
 
 No backend payment code was changed.
+
+
+## Privacy implementation note
+
+Referral links may contain `?ref=CODE` because the application needs the code to apply the discount. The analytics helper removes the `ref` query parameter from GA4 `page_path` and `page_location` values while preserving marketing parameters such as `utm_source`, `utm_medium`, and `utm_campaign`.
+
+Student-specific routes such as `/assessment/<id>` and `/verify/<id>` are excluded from GA4 page-view tracking because their unique URL identifiers are not useful for sales analysis.
