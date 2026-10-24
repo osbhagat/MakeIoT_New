@@ -192,6 +192,23 @@ function commonParams() {
   };
 }
 
+export function trackPageView({ pathname, search = "" }) {
+  if (!analyticsEnabled()) return;
+
+  try {
+    const pagePath = `${pathname || window.location.pathname}${search || ""}`;
+
+    window.gtag("event", "page_view", {
+      ...commonParams(),
+      page_title: document.title,
+      page_location: window.location.href,
+      page_path: pagePath,
+    });
+  } catch {
+    // Page-view analytics must never affect navigation.
+  }
+}
+
 export function trackEvent(name, params = {}) {
   if (!analyticsEnabled()) return;
 
