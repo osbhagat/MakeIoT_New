@@ -9,6 +9,9 @@
             var path = window.location.pathname;
             var isProd = host === "makeiot.in" || host === "www.makeiot.in";
             var isAdmin = path === "/admin" || path.indexOf("/admin/") === 0;
+            var isStudentSpecific =
+                path.indexOf("/assessment/") === 0 ||
+                path.indexOf("/verify/") === 0;
             var adminSession = false;
 
             try {
@@ -19,7 +22,8 @@
                 }
             } catch (e) {}
 
-            window.__MAKEIOT_ANALYTICS_DISABLED__ = !isProd || isAdmin || adminSession;
+            window.__MAKEIOT_ANALYTICS_DISABLED__ =
+                !isProd || isAdmin || isStudentSpecific || adminSession;
             window["ga-disable-" + GA_ID] = window.__MAKEIOT_ANALYTICS_DISABLED__;
         })();
         </script>
