@@ -1,5 +1,6 @@
 import React from "react";
 import { MapPin, Phone, Mail, MessageCircle } from "lucide-react";
+import { trackEvent } from "../lib/analytics";
 
 export default function Contact() {
   return (
@@ -61,7 +62,24 @@ function Card({ icon, title, lines, href, testid }) {
     </div>
   );
   return href ? (
-    <a href={href} target="_blank" rel="noopener noreferrer" data-testid={testid || `contact-card`}>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-testid={testid || `contact-card`}
+      onClick={() =>
+        trackEvent("contact_click", {
+          contact_method:
+            title === "WhatsApp"
+              ? "whatsapp"
+              : title === "Call"
+              ? "phone"
+              : title === "Email"
+              ? "email"
+              : "other",
+        })
+      }
+    >
       {inner}
     </a>
   ) : (
