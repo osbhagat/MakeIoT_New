@@ -81,6 +81,17 @@ Therefore GA4 must never be used as the financial source of truth.
 
 ---
 
+# Implementation additions requested after planning
+
+The implementation also includes these requirements:
+
+- **Admin/local analytics exclusion:** direct `/admin/*` and localhost loads do not initialize GA4 sales tracking. The same direct-load guard also prevents Clarity and PostHog from initializing on admin/local pages. Once a browser tab enters `/admin/*`, GA4 remains disabled for that tab/session so admin testing does not contaminate sales data.
+- **Homepage measurement:** the homepage receives controlled `page_view` tracking, and every homepage enrollment entry point carries a `cta_location` such as `home_navbar`, `home_hero`, or `home_program_card`. This allows homepage-direct purchases to be attributed correctly even when the visitor never opens a program detail page.
+- **AI referral context:** normal GA4 source/referrer attribution is preserved. In addition, when a usable referrer or `utm_source` indicates ChatGPT, Perplexity, Copilot, Gemini, or Claude, business events receive an `ai_referrer` parameter for easier AI-channel analysis. This is supplemental because some AI products may intentionally omit referrer information.
+- **Controlled SPA page views:** automatic GA4 `page_view` sending is disabled and React Router emits exactly one public `page_view` per route change. This avoids duplicate SPA page views and guarantees admin-route exclusion.
+
+---
+
 # Measurement principles
 
 ## 1. Keep the event set small
@@ -827,7 +838,7 @@ This is why funnel tracking must be implemented before increasing marketing spen
 - Confirm current GA measurement ID.
 - Confirm mock/local development traffic behavior.
 
-Status: **Pending**
+Status: **Implemented in code; live GA4 validation pending**
 
 ## Step 1 — Analytics utility
 
@@ -837,7 +848,7 @@ Create:
 
 No business-flow behavior changes.
 
-Status: **Pending**
+Status: **Implemented**
 
 ## Step 2 — Program interest
 
@@ -846,7 +857,7 @@ Add:
 - `view_item`
 - CTA source propagation
 
-Status: **Pending**
+Status: **Implemented**
 
 ## Step 3 — Enrollment funnel
 
@@ -856,7 +867,7 @@ Add:
 - `generate_lead`
 - `begin_checkout`
 
-Status: **Pending**
+Status: **Implemented**
 
 ## Step 4 — Payment result
 
@@ -867,7 +878,7 @@ Add:
 - `checkout_dismissed`
 - `payment_verification_failed`
 
-Status: **Pending**
+Status: **Implemented; real-payment validation still required**
 
 ## Step 5 — GA4 configuration
 
@@ -876,7 +887,7 @@ Status: **Pending**
 - Register only necessary custom dimensions.
 - Build funnel exploration.
 
-Status: **Pending**
+Status: **Pending after deployment**
 
 ## Step 6 — Marketing attribution
 
@@ -888,7 +899,7 @@ Create controlled UTM links for:
 - WhatsApp
 - student referrals
 
-Status: **Pending**
+Status: **Pending after deployment**
 
 ## Step 7 — Supporting sales signals
 
@@ -898,7 +909,7 @@ Only after core funnel is stable:
 - select_item
 - syllabus tracking if required
 
-Status: **Pending**
+Status: **contact_click and select_item implemented; syllabus tracking deferred unless Enhanced Measurement is insufficient**
 
 ---
 
@@ -934,3 +945,26 @@ The GA4 implementation is complete only when all of the following are true:
 | `payment_verification_failed` | Custom | Verify API fails after payment callback | Payment-flow diagnosis |
 
 This is intentionally the complete core funnel. Additional events should only be added when they answer a clear business question.
+
+
+---
+
+# Code implementation status
+
+Implemented on branch:
+
+`ga4-conversion-tracking`
+
+Files changed/added:
+
+- `frontend/src/lib/analytics.js` — safe GA4 helper, ecommerce payloads, AI-referrer context, admin/local exclusion, purchase deduplication.
+- `frontend/public/index.html` — disables automatic GA4 page views, prevents direct admin/local analytics initialization, and keeps Clarity/PostHog out of direct admin/local loads.
+- `frontend/src/App.js` — one controlled public React Router page view per route.
+- `frontend/src/pages/Landing.jsx` — homepage CTA source tracking including referral auto-open.
+- `frontend/src/pages/EmbeddedSTM32.jsx` — `view_item` plus STM32 CTA source tracking.
+- `frontend/src/pages/ArduinoIoT.jsx` — `view_item` plus Arduino CTA source tracking.
+- `frontend/src/components/EnrollmentModal.jsx` — form-open, lead, checkout, verified purchase, checkout dismissal, and verification-failure tracking.
+- `frontend/src/components/Programs.jsx` — homepage program-detail selection tracking.
+- `frontend/src/components/Contact.jsx` — WhatsApp/phone/email contact-intent tracking.
+
+No backend payment code was changed.
