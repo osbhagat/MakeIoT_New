@@ -94,6 +94,13 @@ function isAdminPath(pathname = "") {
   return pathname === "/admin" || pathname.startsWith("/admin/");
 }
 
+function isStudentSpecificPath(pathname = "") {
+  return (
+    pathname.startsWith("/assessment/") ||
+    pathname.startsWith("/verify/")
+  );
+}
+
 function isProductionHost() {
   if (!isBrowser()) return false;
   return PRODUCTION_HOSTS.has(window.location.hostname);
@@ -117,6 +124,11 @@ export function updateAnalyticsRouteState(pathname = "") {
     return;
   }
 
+  if (isStudentSpecificPath(pathname)) {
+    window[`ga-disable-${GA_MEASUREMENT_ID}`] = true;
+    return;
+  }
+
   /*
     Once this browser session has entered the admin area, keep GA4 disabled
     for the rest of that tab/session. This prevents dashboard testing and
@@ -129,6 +141,7 @@ function analyticsEnabled() {
   if (!isBrowser()) return false;
   if (!isProductionHost()) return false;
   if (isAdminPath(window.location.pathname)) return false;
+  if (isStudentSpecificPath(window.location.pathname)) return false;
   if (isAdminAnalyticsSession()) return false;
   if (window[`ga-disable-${GA_MEASUREMENT_ID}`]) return false;
   return typeof window.gtag === "function";
