@@ -42,10 +42,16 @@ function AnalyticsRouteTracker() {
 
   React.useEffect(() => {
     updateAnalyticsRouteState(location.pathname);
-    trackPageView({
-      pathname: location.pathname,
-      search: location.search,
-    });
+
+    // Let route-specific metadata effects update document.title first.
+    const timer = window.setTimeout(() => {
+      trackPageView({
+        pathname: location.pathname,
+        search: location.search,
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [location.pathname, location.search]);
 
   return null;
