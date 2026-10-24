@@ -194,12 +194,38 @@ function detectAiReferrer() {
   return "";
 }
 
+function sanitizedSearch(search = "") {
+  if (!search) return "";
+
+  try {
+    const params = new URLSearchParams(search);
+    params.delete("ref");
+
+    const sanitized = params.toString();
+    return sanitized ? `?${sanitized}` : "";
+  } catch {
+    return "";
+  }
+}
+
+function sanitizedPageLocation() {
+  if (!isBrowser()) return "";
+
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("ref");
+    return url.toString();
+  } catch {
+    return `${window.location.origin}${window.location.pathname}`;
+  }
+}
+
 function commonParams() {
   const aiReferrer = detectAiReferrer();
 
   return {
     page_path: isBrowser()
-      ? `${window.location.pathname}${window.location.search}`
+      ? `${window.location.pathname}${sanitizedSearch(window.location.search)}`
       : "",
     ...(aiReferrer ? { ai_referrer: aiReferrer } : {}),
   };
@@ -209,12 +235,12 @@ export function trackPageView({ pathname, search = "" }) {
   if (!analyticsEnabled()) return;
 
   try {
-    const pagePath = `${pathname || window.location.pathname}${search || ""}`;
+    const pagePath = `${pathname || window.location.pathname}${sanitizedSearch(search)}`;
 
     window.gtag("event", "page_view", {
       ...commonParams(),
       page_title: document.title,
-      page_location: window.location.href,
+      page_location: sanitizedPageLocation(),
       page_path: pagePath,
     });
   } catch {
