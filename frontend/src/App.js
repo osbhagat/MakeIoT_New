@@ -15,6 +15,10 @@ import VerifyCertificate from "@/pages/VerifyCertificate";
 import EmbeddedSTM32 from "@/pages/EmbeddedSTM32";
 import ArduinoIoT from "@/pages/ArduinoIoT";
 import Workshops from "@/pages/Workshops";
+import {
+  trackPageView,
+  updateAnalyticsRouteState,
+} from "@/lib/analytics";
 
 
 // Scroll to the top whenever the route changes
@@ -33,6 +37,21 @@ function ScrollToTop() {
 }
 
 
+function AnalyticsRouteTracker() {
+  const location = useLocation();
+
+  React.useEffect(() => {
+    updateAnalyticsRouteState(location.pathname);
+    trackPageView({
+      pathname: location.pathname,
+      search: location.search,
+    });
+  }, [location.pathname, location.search]);
+
+  return null;
+}
+
+
 function App() {
   return (
     <div className="App">
@@ -40,6 +59,9 @@ function App() {
 
         {/* Reset scroll position whenever a new page/route opens */}
         <ScrollToTop />
+
+        {/* One controlled GA4 page_view per public route; admin is excluded */}
+        <AnalyticsRouteTracker />
 
         <Routes>
           <Route
