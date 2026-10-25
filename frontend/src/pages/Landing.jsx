@@ -19,25 +19,28 @@ export default function Landing() {
   const [enrollOpen, setEnrollOpen] = React.useState(false);
   const [selected, setSelected] = React.useState(null);
   const [initialRef, setInitialRef] = React.useState(refFromUrl);
+  const [ctaLocation, setCtaLocation] = React.useState("home_unknown");
 
   React.useEffect(() => {
     // If URL has ?ref=... auto-open the enrollment modal after mount
     if (refFromUrl) {
       setInitialRef(refFromUrl);
+      setCtaLocation("referral_auto_open");
       setEnrollOpen(true);
     }
   }, [refFromUrl]);
 
-  const openEnroll = (programId) => {
+  const openEnroll = (programId, source = "home_unknown") => {
     setSelected(programId || null);
+    setCtaLocation(source);
     setEnrollOpen(true);
   };
 
   return (
     <div className="min-h-screen bg-white" data-testid="landing-page">
-      <Navbar onEnrollClick={() => openEnroll()} />
-      <Hero onEnrollClick={() => openEnroll()} />
-      <Programs onEnroll={openEnroll} />
+      <Navbar onEnrollClick={() => openEnroll(null, "home_navbar")} />
+      <Hero onEnrollClick={() => openEnroll(null, "home_hero")} />
+      <Programs onEnroll={(programId) => openEnroll(programId, "home_program_card")} />
       <Curriculum />
       <PartnerColleges />
       <WorkshopCards />
@@ -50,6 +53,7 @@ export default function Landing() {
         open={enrollOpen}
         initialProgram={selected}
         initialRef={initialRef}
+        ctaLocation={ctaLocation}
         onClose={() => setEnrollOpen(false)}
       />
     </div>

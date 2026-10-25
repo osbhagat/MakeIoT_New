@@ -1,6 +1,14 @@
 import React from "react";
 import { X, CheckCircle2, Loader2, CreditCard, TicketPercent, Copy, Share2 } from "lucide-react";
 import { api } from "../lib/api";
+import {
+  trackBeginCheckout,
+  trackCheckoutDismissed,
+  trackEnrollmentOpen,
+  trackLead,
+  trackPaymentVerificationFailed,
+  trackPurchase,
+} from "../lib/analytics";
 
 const PROGRAMS = [
   { id: "arduino-iot", label: "Arduino & IoT — ₹999 (Online)", amount: 999 },
@@ -8,7 +16,7 @@ const PROGRAMS = [
   { id: "offline-pune", label: "Offline @ Pune — ₹2999", amount: 2999 },
 ];
 
-export default function EnrollmentModal({ open, initialProgram, initialRef, onClose }) {
+export default function EnrollmentModal({ open, initialProgram, initialRef, ctaLocation = "unknown", onClose }) {
   const [step, setStep] = React.useState("form"); // form | paying | success
   const [form, setForm] = React.useState({
     name: "", email: "", phone: "", program_id: initialProgram || "stm32-embedded",
@@ -21,9 +29,18 @@ export default function EnrollmentModal({ open, initialProgram, initialRef, onCl
   const [loading, setLoading] = React.useState(false);
   const [isMocked, setIsMocked] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
+  const wasOpenRef = React.useRef(false);
 
   React.useEffect(() => {
     if (open) {
+      if (!wasOpenRef.current) {
+        trackEnrollmentOpen({
+          programId: initialProgram || form.program_id,
+          ctaLocation,
+          referralEntry: Boolean(initialRef),
+        });
+      }
+      wasOpenRef.current = true;
       setStep("form");
       setError("");
       setEnrollment(null);
@@ -35,8 +52,10 @@ export default function EnrollmentModal({ open, initialProgram, initialRef, onCl
         program_id: initialProgram || f.program_id,
         referral_code: initialRef || f.referral_code,
       }));
+    } else {
+      wasOpenRef.current = false;
     }
-  }, [open, initialProgram, initialRef]);
+  }, [open, initialProgram, initialRef, ctaLocation, form.program_id]);
 
   // Auto-validate referral when both code and program are set
   React.useEffect(() => {
@@ -82,7 +101,10 @@ export default function EnrollmentModal({ open, initialProgram, initialRef, onCl
       if (!payload.referral_code || refStatus.state !== "valid") delete payload.referral_code;
       const { data: enroll } = await api.post("/enrollments", payload);
       setEnrollment(enroll);
+      trackLead(enroll, ctaLocation);
+
       const { data: order } = await api.post("/razorpay/create-order", { enrollment_id: enroll.id });
+      trackBeginCheckout(enroll);
       setIsMocked(order.is_mocked);
       setStep("paying");
       if (order.is_mocked) {
@@ -115,8 +137,10 @@ export default function EnrollmentModal({ open, initialProgram, initialRef, onCl
             razorpay_signature: res.razorpay_signature,
           });
           setOwnRefCode(data.referral_code || "");
+          trackPurchase(enroll, res.razorpay_payment_id);
           setStep("success");
         } catch (err) {
+          trackPaymentVerificationFailed(enroll);
           setError("Payment verification failed. Please contact support.");
           setStep("form");
         } finally {
@@ -124,7 +148,11 @@ export default function EnrollmentModal({ open, initialProgram, initialRef, onCl
         }
       },
       modal: {
-        ondismiss: () => { setLoading(false); setStep("form"); },
+        ondismiss: () => {
+          trackCheckoutDismissed(enroll);
+          setLoading(false);
+          setStep("form");
+        },
       },
     };
     const rzp = new window.Razorpay(options);

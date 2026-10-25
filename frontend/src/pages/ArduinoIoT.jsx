@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import EnrollmentModal from "../components/EnrollmentModal";
+import { trackViewItem } from "../lib/analytics";
 
 const BLUE = "#0055FF";
 const ORANGE = "#FF7A00";
@@ -268,8 +269,16 @@ function CurriculumModule({ module }) {
 
 export default function ArduinoIOT() {
   const [enrollOpen, setEnrollOpen] = React.useState(false);
+  const [ctaLocation, setCtaLocation] = React.useState("arduino_unknown");
 
-  const openEnrollment = () => setEnrollOpen(true);
+  const openEnrollment = (source = "arduino_unknown") => {
+    setCtaLocation(source);
+    setEnrollOpen(true);
+  };
+
+  React.useEffect(() => {
+    trackViewItem("arduino-iot");
+  }, []);
 
   React.useEffect(() => {
     const title =
@@ -375,7 +384,7 @@ export default function ArduinoIOT() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
-      <Navbar onEnrollClick={openEnrollment} />
+      <Navbar onEnrollClick={() => openEnrollment("arduino_navbar")} />
 
       <main>
         {/* =========================================================
@@ -429,7 +438,7 @@ export default function ArduinoIOT() {
 
                 <div className="mt-7 flex flex-wrap gap-4">
                   <button
-                    onClick={openEnrollment}
+                    onClick={() => openEnrollment("arduino_hero")}
                     className="inline-flex items-center justify-center rounded-xl bg-[#0055FF] px-7 py-3.5 text-base font-semibold text-white shadow-sm hover:bg-[#0044CC] transition"
                   >
                     Enroll for ₹999
@@ -1157,7 +1166,7 @@ export default function ArduinoIOT() {
 
                 <div className="lg:text-right">
                   <button
-                    onClick={openEnrollment}
+                    onClick={() => openEnrollment("arduino_bottom_cta")}
                     className="rounded-lg bg-[#D9A441] px-7 py-3.5 text-sm font-semibold text-slate-950 hover:bg-[#E4B65A] transition"
                   >
                     Enroll Now
@@ -1364,6 +1373,7 @@ export default function ArduinoIOT() {
         open={enrollOpen}
         initialProgram="arduino-iot"
         initialRef=""
+        ctaLocation={ctaLocation}
         onClose={() => setEnrollOpen(false)}
       />
     </div>

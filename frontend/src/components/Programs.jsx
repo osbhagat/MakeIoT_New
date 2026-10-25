@@ -1,4 +1,5 @@
 import React from "react";
+import { trackProgramSelect } from "../lib/analytics";
 import { Check, MapPin, Zap, Award, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -216,7 +217,7 @@ function ProgramCard({ program, onEnroll }) {
         {program.detailsPath && (
           <Link
             to={program.detailsPath}
-            data-testid={`program-details-${program.id}`}
+            data-testid={`program-details-${program.id}`} onClick={() => trackProgramSelect(program)}
             className={`w-full inline-flex items-center justify-center rounded-lg font-semibold py-3 border transition ${
               isDark
                 ? "border-white/30 text-white bg-white/5 hover:bg-white/10"
